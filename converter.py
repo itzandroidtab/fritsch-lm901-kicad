@@ -66,6 +66,9 @@ def position_to_board(position, reference, rotate):
     x = str(int(round((position.x * 10) - (reference.x * 10), 0)))
     y = str(int(round((position.y * 10) + (reference.y * 10), 0)))
 
+    if rotate:
+        return (y, x)
+
     return (x, y)
 
 def generate(reference_points, input_file, output_file, rotate):
