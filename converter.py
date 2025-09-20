@@ -173,13 +173,13 @@ def generate(reference_points, input_file, output_file, rotate):
         x, y = position_to_board(pos, reference_points[0], rotate)
         r = str(to_rotation(round(float(part[5]), 0)))
 
-        # add to the list
-        res = (feeder, x, y, r, part[0])
-        parts.append(res)
-
         if feeder == ignore_value:
             print(f"{Fore.CYAN}\tSkipping part {part[0]}, {x}, {y}, {r}, {Style.RESET_ALL}")
             continue
+
+        # add to the list
+        res = (feeder, x, y, r, part[0])
+        parts.append(res)
 
         # print the data
         print(f"{Fore.YELLOW}\t{feeder}, {x}, {y}, {r}, {part[0]}{Style.RESET_ALL}")
