@@ -70,6 +70,7 @@ jobs:
       uses: actions/upload-artifact@v4
       id: artifact-upload-image0
       with:
+        name: pinball_r000.png
         path: |
          ${{github.workspace}}/pinball_r000.png
 
