@@ -23,7 +23,7 @@ jobs:
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
-        pip install matplotlib
+        pip install matplotlib colorama
 
     - name: Get the file to process
       run: |
