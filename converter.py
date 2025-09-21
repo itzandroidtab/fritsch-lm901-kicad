@@ -1,4 +1,5 @@
 import sys
+import math
 
 from colorama import init as colorama_init
 from colorama import Fore
@@ -63,11 +64,20 @@ def to_rotation(value):
 
 
 def position_to_board(position, reference, rotate):
-    x = str(int(round((position.x * 10) - (reference.x * 10), 0)))
-    y = str(int(round((position.y * 10) + (reference.y * 10), 0)))
+    # translate the position to the reference
+    pos = coordinate((position.x - reference.x) * 10, (position.y - reference.y) * 10)
 
-    if rotate:
-        return (y, x)
+    # rotate the position if needed
+    if rotate > 0:
+        angle = math.radians(rotate)
+
+        temp = pos.x * math.cos(angle) - pos.y * math.sin(angle)
+        pos.y = pos.x * math.sin(angle) + pos.y * math.cos(angle)
+        pos.x = temp
+
+    # round the position to the nearest integer
+    x = str(int(round(pos.x)))
+    y = str(int(round(pos.y)))
 
     return (x, y)
 
@@ -105,7 +115,7 @@ def generate(reference_points, input_file, output_file, rotate):
     out.write("0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0\n")
     out.write("0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0\n")
 
-    # first reference point is always 0,0
+    # first reference point is always 0,0 (always relative to itself)
     out.write("0,0\n")
 
     if len(reference_points) == 3:
@@ -214,7 +224,7 @@ if __name__ == "__main__":
     parser.add_argument("-ref", type=str, help="Reference 0 \"X,Y\" coordinate", required=True)
     parser.add_argument("-i", "--input_file", type=str, help="Input .pos file", required=True)
     parser.add_argument("-o", "--output_file", type=str, help="Output .smd file", required=True)
-    parser.add_argument("-r", "--rotate", help="Rotate the part by 90 degrees", action="store_true", required=False)
+    parser.add_argument("-r", "--rotate", help="Rotate the part by 90 degrees", type=str, required=False)
     parser.add_argument("-ref1", type=str, help="Reference 1 \"X,Y\" coordinate", required=False)
     parser.add_argument("-ref2", type=str, help="Reference 2 \"X,Y\" coordinate", required=False)
 
@@ -240,7 +250,7 @@ if __name__ == "__main__":
             break
 
         try:
-            reference_points.append(coordinate(float(ref_split[0]), float(ref_split[1])))
+            reference_points.append(coordinate(float(ref_split[0]), -1 * float(ref_split[1])))
         except ValueError:
             print(f"{Fore.RED}Invalid reference point. Use \"X,Y\" for the reference{Style.RESET_ALL}")
             error = True
