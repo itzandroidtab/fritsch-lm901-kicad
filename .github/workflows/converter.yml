@@ -52,23 +52,29 @@ jobs:
         2
         EOF
 
-    - name: Visualize the output
+    - name: Visualize the output to a file
       run: |
-        echo "## Creating a visualisation of the points" > $GITHUB_STEP_SUMMARY
         python visualize_coords.py pinball_r000.smd ${{github.workspace}}/pinball_r000.png
-        echo "![image](${{github.workspace}}/pinball_r000.png)" >> $GITHUB_STEP_SUMMARY
         python visualize_coords.py pinball_r090.smd ${{github.workspace}}/pinball_r090.png
-        echo "![image](${{github.workspace}}/pinball_r090.png)" >> $GITHUB_STEP_SUMMARY
         python visualize_coords.py pinball_r180.smd ${{github.workspace}}/pinball_r180.png
-        echo "![image](${{github.workspace}}/pinball_r180.png)" >> $GITHUB_STEP_SUMMARY
         python visualize_coords.py pinball_r270.smd ${{github.workspace}}/pinball_r270.png
-        echo "![image](${{github.workspace}}/pinball_r270.png)" >> $GITHUB_STEP_SUMMARY
         python visualize_coords.py pinball_r045.smd ${{github.workspace}}/pinball_r045.png
-        echo "![image](${{github.workspace}}/pinball_r045.png)" >> $GITHUB_STEP_SUMMARY
 
     - name: Uploading artifact
       uses: actions/upload-artifact@v4
       with:
         path: |
-         *.png
          *.smd
+
+    - name: Uploading artifact
+      uses: actions/upload-artifact@v4
+      id: artifact-upload-image0
+      with:
+        path: |
+         ${{github.workspace}}/pinball_r000.png
+
+
+    - name: Visualize the output
+      run: |
+        echo "## Creating a visualisation of the points" > $GITHUB_STEP_SUMMARY
+        echo "![image](steps.artifact-upload-image0.outputs.artifact-url)" >> $GITHUB_STEP_SUMMARY
