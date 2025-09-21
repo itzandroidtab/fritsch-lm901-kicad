@@ -151,6 +151,7 @@ def generate(reference_points, input_file, output_file, rotate):
 
         part = line.split()
 
+        # skip the line if it has not enough data
         if (len(part) < 7):
             continue
 
@@ -183,6 +184,7 @@ def generate(reference_points, input_file, output_file, rotate):
         x, y = position_to_board(pos, reference_points[0], rotate)
         r = str(to_rotation(round(float(part[5]), 0)))
 
+        # skip the part if needed
         if feeder == ignore_value:
             print(f"{Fore.CYAN}\tSkipping part {part[0]}, {x}, {y}, {r}, {Style.RESET_ALL}")
             continue
@@ -198,13 +200,11 @@ def generate(reference_points, input_file, output_file, rotate):
     # set the amount of parts
     out.write(str(part_count) + "\n")
 
+    # sort based on the feeder. This groups all the parts together
     parts.sort(key=lambda p : p[0])
 
     # write the parts
     for part in parts:
-        if part[0] == ignore_value:
-            continue
-
         for i in range(len(part)):
             out.write(str(part[i]))
 
@@ -224,7 +224,7 @@ if __name__ == "__main__":
     parser.add_argument("-ref", type=str, help="Reference 0 \"X,Y\" coordinate", required=True)
     parser.add_argument("-i", "--input_file", type=str, help="Input .pos file", required=True)
     parser.add_argument("-o", "--output_file", type=str, help="Output .smd file", required=True)
-    parser.add_argument("-r", "--rotate", help="Rotate the part by 90 degrees", type=str, required=False)
+    parser.add_argument("-r", "--rotate", help="Rotate the part by 90 degrees", type=int, required=False)
     parser.add_argument("-ref1", type=str, help="Reference 1 \"X,Y\" coordinate", required=False)
     parser.add_argument("-ref2", type=str, help="Reference 2 \"X,Y\" coordinate", required=False)
 
@@ -239,16 +239,19 @@ if __name__ == "__main__":
     references = [args.ref, args.ref1, args.ref2]
     reference_points = []
 
+    # add all the reference points from the arguments
     for ref in references:
         if ref is None:
             break
 
+        # split the reference into x and y
         ref_split = ref.split(",")
         if len(ref_split) != 2:
             print(f"{Fore.RED}Invalid reference point. Use \"X,Y\" for the reference{Style.RESET_ALL}")
             error = True
             break
 
+        # try to convert the reference to a float
         try:
             reference_points.append(coordinate(float(ref_split[0]), -1 * float(ref_split[1])))
         except ValueError:
@@ -256,6 +259,7 @@ if __name__ == "__main__":
             error = True
             break
 
+    # check if we have at least one reference point
     if len(reference_points) == 0:
         print(f"{Fore.RED}No reference points found. Use \"X,Y\" for the reference{Style.RESET_ALL}")
     elif error:
