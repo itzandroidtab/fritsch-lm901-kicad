@@ -265,6 +265,6 @@ if __name__ == "__main__":
     elif error:
         print(f"{Fore.RED}Exiting due to errors{Style.RESET_ALL}")
     else:
-        generate(reference_points, args.input_file, args.output_file, args.rotate)
+        generate(reference_points, args.input_file, args.output_file, args.rotate if args.rotate else 0)
 
 
