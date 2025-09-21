@@ -49,6 +49,16 @@ class coordinate:
         self.y = y
 
 
+class kicad_part:
+    def __init__(self, ref, value, package, pos, rot, side):
+        self.ref = ref
+        self.value = value
+        self.package = package
+        self.pos = pos
+        self.rot = rot
+        self.side = side
+
+
 def to_rotation(value):
     if value != 0 and value != 90 and value != 180 and value != 270:
         return 0
@@ -149,20 +159,23 @@ def generate(reference_points, input_file, output_file, rotate):
         if line.startswith("## End"):
             break
 
-        part = line.split()
+        split_line = line.split()
 
         # skip the line if it has not enough data
-        if (len(part) < 7):
+        if (len(split_line) < 7):
             continue
 
-        # check if we already have the feeder info
-        if (part[2], part[1]) in pair_data:
-            feeder = pair_data[(part[2], part[1])]
+        # convert the split part to a kicad_part
+        part = kicad_part(split_line[0], split_line[1], split_line[2], coordinate(float(split_line[3]), float(split_line[4])), float(split_line[5]), split_line[6])
 
-            print(f"{Fore.GREEN}<{Style.RESET_ALL} Using feeder id {feeder} for: {part[0]} - {part[1]}")
+        # check if we already have the feeder info
+        if (part.package, part.value) in pair_data:
+            feeder = pair_data[(part.package, part.value)]
+
+            print(f"{Fore.GREEN}<{Style.RESET_ALL} Using feeder id {feeder} for: {part.ref} - {part.value}")
         else:
             # get the user input for the feeder
-            user_data = input(f"{Fore.RED}>{Style.RESET_ALL} Enter feeder id for {part[0]} - {part[1]}: ")
+            user_data = input(f"{Fore.RED}>{Style.RESET_ALL} Enter feeder id for {part.ref} - {part.value}: ")
             feeder = None
 
             # check if we have a number
@@ -178,23 +191,22 @@ def generate(reference_points, input_file, output_file, rotate):
                     sys.exit(1)
 
             # store the feeder info
-            pair_data[(part[2], part[1])] = feeder
+            pair_data[(part.package, part.value)] = feeder
 
-        pos = coordinate(float(part[3]), float(part[4]))
-        x, y = position_to_board(pos, reference_points[0], rotate)
-        r = str(to_rotation(round(float(part[5]), 0)))
+        x, y = position_to_board(part.pos, reference_points[0], rotate)
+        r = str(to_rotation(round(part.rot, 0)))
 
         # skip the part if needed
         if feeder == ignore_value:
-            print(f"{Fore.CYAN}\tSkipping part {part[0]}, {x}, {y}, {r}, {Style.RESET_ALL}")
+            print(f"{Fore.CYAN}\tSkipping part {part.ref}, {x}, {y}, {r}, {Style.RESET_ALL}")
             continue
 
         # add to the list
-        res = (feeder, x, y, r, part[0])
+        res = (feeder, x, y, r, part.ref)
         parts.append(res)
 
         # print the data
-        print(f"{Fore.YELLOW}\t{feeder}, {x}, {y}, {r}, {part[0]}{Style.RESET_ALL}")
+        print(f"{Fore.YELLOW}\t{feeder}, {x}, {y}, {r}, {part.ref}{Style.RESET_ALL}")
         part_count += 1
 
     # set the amount of parts
@@ -204,11 +216,11 @@ def generate(reference_points, input_file, output_file, rotate):
     parts.sort(key=lambda p : p[0])
 
     # write the parts
-    for part in parts:
-        for i in range(len(part)):
-            out.write(str(part[i]))
+    for p in parts:
+        for i in range(len(p)):
+            out.write(str(p[i]))
 
-            if i + 1 < len(part):
+            if (i + 1) < len(p):
                 out.write(",")
 
         out.write("\n")
