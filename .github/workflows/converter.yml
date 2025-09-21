@@ -1,0 +1,53 @@
+name: Kicad LM901 converter
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+    - name: Set up Python 3.10
+      uses: actions/setup-python@v3
+      with:
+        python-version: "3.10"
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install matplotlib
+
+    - name: Get the file to process
+      run: |
+        wget https://koon.io/github/pinball_playfield_top.pos
+
+    - name: Run the converter with some data
+      run: |
+        python kicad_lm901_converter.py -i pinball_playfield_top.pos -o pinball_r000.smd -ref "77.75,341.75" -ref1 "129.5,345.25" -ref2 "181.25,53" -r 0
+        python kicad_lm901_converter.py -i pinball_playfield_top.pos -o pinball_r090.smd -ref "77.75,341.75" -ref1 "129.5,345.25" -ref2 "181.25,53" -r 90
+        python kicad_lm901_converter.py -i pinball_playfield_top.pos -o pinball_r180.smd -ref "77.75,341.75" -ref1 "129.5,345.25" -ref2 "181.25,53" -r 180
+        python kicad_lm901_converter.py -i pinball_playfield_top.pos -o pinball_r270.smd -ref "77.75,341.75" -ref1 "129.5,345.25" -ref2 "181.25,53" -r 270
+        python kicad_lm901_converter.py -i pinball_playfield_top.pos -o pinball_r045.smd -ref "77.75,341.75" -ref1 "129.5,345.25" -ref2 "181.25,53" -r 45
+
+    - name: Visualize the output
+      run: |
+        python visualize_coords.py pinball_r000.smd pinball_r000.png
+        python visualize_coords.py pinball_r090.smd pinball_r090.png
+        python visualize_coords.py pinball_r180.smd pinball_r180.png
+        python visualize_coords.py pinball_r270.smd pinball_r270.png
+        python visualize_coords.py pinball_r045.smd pinball_r045.png
+
+    - name: Uploading artifact
+      uses: actions/upload-artifact@v4
+      with:
+        path: |
+         *.png
+         *.smd
