@@ -31,11 +31,26 @@ jobs:
 
     - name: Run the converter with some data
       run: |
-        python kicad_lm901_converter.py -i pinball_playfield_top.pos -o pinball_r000.smd -ref "77.75,341.75" -ref1 "129.5,345.25" -ref2 "181.25,53" -r 0
-        python kicad_lm901_converter.py -i pinball_playfield_top.pos -o pinball_r090.smd -ref "77.75,341.75" -ref1 "129.5,345.25" -ref2 "181.25,53" -r 90
-        python kicad_lm901_converter.py -i pinball_playfield_top.pos -o pinball_r180.smd -ref "77.75,341.75" -ref1 "129.5,345.25" -ref2 "181.25,53" -r 180
-        python kicad_lm901_converter.py -i pinball_playfield_top.pos -o pinball_r270.smd -ref "77.75,341.75" -ref1 "129.5,345.25" -ref2 "181.25,53" -r 270
-        python kicad_lm901_converter.py -i pinball_playfield_top.pos -o pinball_r045.smd -ref "77.75,341.75" -ref1 "129.5,345.25" -ref2 "181.25,53" -r 45
+        python kicad_lm901_converter.py -i pinball_playfield_top.pos -o pinball_r000.smd -ref "77.75,341.75" -ref1 "129.5,345.25" -ref2 "181.25,53" -r 0 << EOF 
+        s
+        2
+        EOF
+        python kicad_lm901_converter.py -i pinball_playfield_top.pos -o pinball_r090.smd -ref "77.75,341.75" -ref1 "129.5,345.25" -ref2 "181.25,53" -r 90 << EOF 
+        s
+        2
+        EOF
+        python kicad_lm901_converter.py -i pinball_playfield_top.pos -o pinball_r180.smd -ref "77.75,341.75" -ref1 "129.5,345.25" -ref2 "181.25,53" -r 180 << EOF 
+        s
+        2
+        EOF
+        python kicad_lm901_converter.py -i pinball_playfield_top.pos -o pinball_r270.smd -ref "77.75,341.75" -ref1 "129.5,345.25" -ref2 "181.25,53" -r 270 << EOF 
+        s
+        2
+        EOF
+        python kicad_lm901_converter.py -i pinball_playfield_top.pos -o pinball_r045.smd -ref "77.75,341.75" -ref1 "129.5,345.25" -ref2 "181.25,53" -r 45 << EOF 
+        s
+        2
+        EOF
 
     - name: Visualize the output
       run: |
