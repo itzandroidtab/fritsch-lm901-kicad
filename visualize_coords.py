@@ -41,4 +41,9 @@ plt.ylabel('Y')
 plt.title('Pinball Top Coordinates Comparison')
 plt.legend()
 plt.grid(True)
-plt.show()
+
+# if we have more than 1 argument, save the figure to the second argument
+if len(sys.argv) > 2:
+    plt.savefig(sys.argv[2])
+else:
+    plt.show()
