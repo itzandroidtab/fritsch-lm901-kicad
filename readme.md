@@ -16,7 +16,7 @@ python kicad_lm901_converter.py -i <input_file.pos> -o <output_file.smd> -ref <"
 - `-o <output_file.smd>`: Output SMD file (required)
 - `-ref <X,Y>`: Reference 0 coordinate (required, e.g. "77.75,341.75")
 - `-ref1 <X,Y>`: Reference 1 coordinate (optional)
-- `-ref2 <X,Y>`: Reference 2 coordinate (optional, required if ref1 is present or ref1 is not used)
+- `-ref2 <X,Y>`: Reference 2 coordinate (optional, required if ref1 is present. Ref 1 is not used if Ref 2 is not present)
 - `-r <rotation>`: Rotation angle in degrees (optional, e.g. 90, 180, 270)
 
 Example:
